@@ -1,61 +1,6 @@
 %test CCT-HTD
 addpath(genpath(['.\tensor_toolbox']));
-%---------------------Construction of multisource features tensors-------------------------%
-str='./MSTAR/2S1_1/';
-samples(1).X=heteroFeature_construct(str,1);
-str='./MSTAR/T72_1/';
-samples(2).X=heteroFeature_construct(str,1);
-str='./MSTAR/BRDM_2_1/';
-samples(3).X=heteroFeature_construct(str,1);
-str='./MSTAR/ZIL_131_1/';
-samples(4).X=heteroFeature_construct(str,1);
-str='./MSTAR/T62_1/';
-samples(5).X=heteroFeature_construct(str,1);
-samples_num=zeros(1,size(samples,2));
-for i=1:size(samples,2)
-    samples_num(i)=size(samples(i).X,2);
-end
-s(1)=size(samples(1).X{1},1);
-s(2)=size(samples(1).X{1},2);
-s(3)=size(samples(1).X{1},3);
-Xs=tenzeros([s,sum(samples_num)]);
-for j=1:size(samples,2)
-    for i=1:size(samples(j).X,2)
-        Xs(:,:,:,sum(samples_num(1:j-1))+i)=samples(j).X{i}.data;
-    end
-end
-ys=zeros(sum(samples_num),1);
-for i=1:size(samples,2)
-    ys(sum(samples_num(1:i-1))+1:sum(samples_num(1:i)))=i*ones(samples_num(i),1);
-end
-
-str='./MSTAR/2S1_2/';
-samples(1).X=heteroFeature_construct(str,1);
-str='./MSTAR/T72_2/';
-samples(2).X=heteroFeature_construct(str,1);
-str='./MSTAR/BRDM_2_2/';
-samples(3).X=heteroFeature_construct(str,1);
-str='./MSTAR/ZIL_131_2/';
-samples(4).X=heteroFeature_construct(str,1);
-str='./MSTAR/T62_2/';
-samples(5).X=heteroFeature_construct(str,1);
-samples_num=zeros(1,size(samples,2));
-for i=1:size(samples,2)
-    samples_num(i)=size(samples(i).X,2);
-end
-s(1)=size(samples(1).X{1},1);
-s(2)=size(samples(1).X{1},2);
-s(3)=size(samples(1).X{1},3);
-Xt=tenzeros([s,sum(samples_num)]);
-for j=1:size(samples,2)
-    for i=1:size(samples(j).X,2)
-        Xt(:,:,:,sum(samples_num(1:j-1))+i)=samples(j).X{i}.data;
-    end
-end
-yt=zeros(sum(samples_num),1);
-for i=1:size(samples,2)
-    yt(sum(samples_num(1:i-1))+1:sum(samples_num(1:i)))=i*ones(samples_num(i),1);
-end
+load CCT-HTD.mat %Xs,Xt,ys,yt denote the samples from different sources and the corresponding labels
 %set the parameter of CCT-HTD
 sample_rate=[0.2:0.1:1];
 r_num=rand(1,size(Xs,4));
@@ -66,8 +11,8 @@ r_num=rand(1,size(Xt,4));
 [~,ind]=sort(r_num);
 yt_=yt;
 yt_(ind(round(size(Xt,4)*sample_rate(4)):end))=0;
-Id=ceil(s/4);
-M=5;
+Id=ceil(s/4);%the dimension of extracted features;
+M=5;%the number of classes
 c1=0.2;
 c3=0.5;
 tic;
